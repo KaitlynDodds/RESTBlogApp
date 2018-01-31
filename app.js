@@ -21,8 +21,20 @@ var Blog = mongoose.model("Blog", blogSchema);
 
 // RESTFUL ROUTES
 
-// INDEX
+app.get('/', function(req, res) {
+    res.redirect('/blogs');
+});
 
+// INDEX
+app.get('/blogs', function(req, res) {
+    Blog.find({}, function(err, blogs) {
+        if (err) {
+            console.log(err);
+        } else {
+            res.render('index', {blogs: blogs});
+        }
+    })
+});
 
 
 app.listen(3000, () => console.log('App listening on port 3000'));
