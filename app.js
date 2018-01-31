@@ -42,6 +42,18 @@ app.get('/blogs/new', function(req, res) {
 });
 
 // CREATE 
+app.post('/blogs', function(req, res) {
+    // create blog
+    Blog.create(req.body.blog, function(err, blog) {
+        if (err) {
+            console.log(err);
+        } else {
+            console.log('NEW');
+            console.log(blog);
+            res.redirect('/blogs');
+        }
+    });
+});
 
 
 app.listen(3000, () => console.log('App listening on port 3000'));
