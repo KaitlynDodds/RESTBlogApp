@@ -1,6 +1,7 @@
 const express = require('express'),
       bodyParser = require('body-parser'),
-      mongoose = require('mongoose'),   
+      mongoose = require('mongoose'),
+      methodOverride = require('method-override'),   
       app = express();
 
 // APP SETUP
@@ -8,6 +9,7 @@ mongoose.connect('mongodb://127.0.0.1/blogs');  // setup mongoose
 app.set('view engine', 'ejs');                  // setup view engine
 app.use(express.static('public'));              // serve from public dir
 app.use(bodyParser.urlencoded({extended: true}));
+app.use(methodOverride("_method"));                        // Enable PUT and DELETE Methods
 
 // MONGOOSE MODEL CONFIG
 var blogSchema = new mongoose.Schema({
@@ -63,6 +65,30 @@ app.get('/blogs/:id', function(req, res) {
             res.redirect('/');
         } else {
             res.render('show', {blog: blog});
+        }
+    });
+});
+
+// EDIT
+app.get('/blogs/:id/edit', function(req, res) {
+    Blog.findById(req.params.id, function(err, blog) {
+        if (err) {
+            console.log(err);
+            res.redirect('/');
+        } else {
+            res.render('edit', {blog: blog});    
+        }
+    });
+});
+
+// UPDATE
+app.put('/blogs/:id', function(req, res) {
+    Blog.findByIdAndUpdate(req.params.id, req.body.blog, function(err, blog) {
+        if (err) {
+            console.log(err);
+            res.redirect('/blogs');
+        } else {
+            res.redirect('/blogs/' + req.params.id);
         }
     });
 });
