@@ -93,5 +93,18 @@ app.put('/blogs/:id', function(req, res) {
     });
 });
 
+// DELETE
+app.delete('/blogs/:id', function(req, res) {
+    Blog.findByIdAndRemove(req.params.id, function(err, blog) {
+        if (err) {
+            console.log(err);
+            res.redirect('/blogs');
+        } else {
+            console.log(blog);
+            res.redirect('/blogs');
+        }
+    });
+});
+
 
 app.listen(3000, () => console.log('App listening on port 3000'));
