@@ -1,7 +1,8 @@
 const express = require('express'),
+      methodOverride = require('method-override'), 
+      expressSanitizer = require('express-sanitizer'),  
       bodyParser = require('body-parser'),
       mongoose = require('mongoose'),
-      methodOverride = require('method-override'),   
       app = express();
 
 // APP SETUP
@@ -9,6 +10,7 @@ mongoose.connect('mongodb://127.0.0.1/blogs');  // setup mongoose
 app.set('view engine', 'ejs');                  // setup view engine
 app.use(express.static('public'));              // serve from public dir
 app.use(bodyParser.urlencoded({extended: true}));
+app.use(expressSanitizer());
 app.use(methodOverride("_method"));                        // Enable PUT and DELETE Methods
 
 // MONGOOSE MODEL CONFIG
@@ -46,6 +48,7 @@ app.get('/blogs/new', function(req, res) {
 // CREATE 
 app.post('/blogs', function(req, res) {
     // create blog
+    req.body.blog.body = req.sanitize(req.body.blog.body);
     Blog.create(req.body.blog, function(err, blog) {
         if (err) {
             console.log(err);
@@ -83,6 +86,7 @@ app.get('/blogs/:id/edit', function(req, res) {
 
 // UPDATE
 app.put('/blogs/:id', function(req, res) {
+    req.body.blog.body = req.sanitize(req.body.blog.body);    
     Blog.findByIdAndUpdate(req.params.id, req.body.blog, function(err, blog) {
         if (err) {
             console.log(err);
